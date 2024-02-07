@@ -89,7 +89,7 @@ class RecordingMaintainer(threading.Thread):
         files_in_use = []
         for process in psutil.process_iter():
             try:
-                if process.name() != "ffmpeg":
+                if process.name() != "ffmpeg" and "ffmpeg" not in " ".join(process.cmdline()):
                     continue
                 flist = process.open_files()
                 if flist:
