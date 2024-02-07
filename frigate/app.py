@@ -9,6 +9,7 @@ import sys
 import traceback
 from multiprocessing import Queue
 from multiprocessing.synchronize import Event as MpEvent
+from multiprocessing.context import Process
 from types import FrameType
 from typing import Optional
 
@@ -72,6 +73,8 @@ class FrigateApp:
         self.ptz_metrics: dict[str, PTZMetricsTypes] = {}
         self.processes: dict[str, int] = {}
         self.region_grids: dict[str, list[list[dict[str, int]]]] = {}
+        self.camera_track_processes: dict[str, Process] = {}
+        self.camera_capture_processes: dict[str, Process] = {}
 
     def set_environment_vars(self) -> None:
         for key, value in self.config.environment_vars.items():
@@ -533,7 +536,7 @@ class FrigateApp:
                 ),
             )
             camera_process.daemon = True
-            self.camera_metrics[name]["process"] = camera_process
+            self.camera_track_processes[name] = camera_process
             camera_process.start()
             logger.info(f"Camera processor started for {name}: {camera_process.pid}")
 
@@ -549,7 +552,7 @@ class FrigateApp:
                 args=(name, config, self.camera_metrics[name]),
             )
             capture_process.daemon = True
-            self.camera_metrics[name]["capture_process"] = capture_process
+            self.camera_capture_processes[name] = capture_process
             capture_process.start()
             logger.info(f"Capture process started for {name}: {capture_process.pid}")
 
@@ -687,6 +690,11 @@ class FrigateApp:
         self.start_detected_frames_processor()
         self.start_camera_processors()
         self.start_camera_capture_processes()
+        for name in self.config.cameras.keys():
+            self.camera_metrics[name]["process"] = self.camera_track_processes[name]
+            self.camera_track_processes[name] = None
+            self.camera_metrics[name]["capture_process"] = self.camera_capture_processes[name]
+            self.camera_capture_processes[name] = None
         self.start_audio_processors()
         self.start_storage_maintainer()
         self.init_stats()
@@ -707,7 +715,7 @@ class FrigateApp:
         signal.signal(signal.SIGTERM, receiveSignal)
 
         try:
-            self.flask_app.run(host="127.0.0.1", port=5001, debug=False, threaded=True)
+            self.flask_app.run(host="unix:///var/snap/frigate/current/api.socket", debug=False, threaded=True)
         except KeyboardInterrupt:
             pass
 

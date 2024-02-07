@@ -1299,9 +1299,9 @@ class FrigateConfig(FrigateBaseModel):
 
             if "path" not in merged_model:
                 if detector_config.type == "cpu":
-                    merged_model["path"] = "/cpu_model.tflite"
+                    merged_model["path"] = "/snap/frigate/current/frigate/cpu_model.tflite"
                 elif detector_config.type == "edgetpu":
-                    merged_model["path"] = "/edgetpu_model.tflite"
+                    merged_model["path"] = "/snap/frigate/current/frigate/edgetpu_model.tflite"
 
             detector_config.model = ModelConfig.parse_obj(merged_model)
             detector_config.model.check_and_load_plus_model(

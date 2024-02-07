@@ -1445,7 +1445,7 @@ def latest_frame(camera_name):
             + retry_interval
         ):
             if current_app.camera_error_image is None:
-                error_image = glob.glob("/opt/frigate/frigate/images/camera-error.jpg")
+                error_image = glob.glob("/snap/frigate/current/frigate/opt/frigate/frigate/images/camera-error.jpg")
 
                 if len(error_image) > 0:
                     current_app.camera_error_image = cv2.imread(

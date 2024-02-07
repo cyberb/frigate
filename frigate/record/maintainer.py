@@ -94,7 +94,8 @@ class RecordingMaintainer(threading.Thread):
                 flist = process.open_files()
                 if flist:
                     for nt in flist:
-                        if nt.path.startswith(CACHE_DIR):
+                        cache_dir = os.path.realpath(CACHE_DIR)
+                        if nt.path.startswith(cache_dir):
                             files_in_use.append(nt.path.split("/")[-1])
             except psutil.Error:
                 continue

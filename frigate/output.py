@@ -294,7 +294,7 @@ class BirdsEyeFrameManager:
             birdseye_logo = cv2.imread(custom_logo_files[0], cv2.IMREAD_UNCHANGED)
 
         if birdseye_logo is None:
-            logo_files = glob.glob("/opt/frigate/frigate/images/birdseye.png")
+            logo_files = glob.glob("/snap/frigate/current/frigate/opt/frigate/frigate/images/birdseye.png")
 
             if len(logo_files) > 0:
                 birdseye_logo = cv2.imread(logo_files[0], cv2.IMREAD_UNCHANGED)

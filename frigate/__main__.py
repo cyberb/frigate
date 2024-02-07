@@ -1,9 +1,11 @@
 import faulthandler
 import threading
-
+import multiprocessing
 from flask import cli
 
 from frigate.app import FrigateApp
+multiprocessing.set_start_method("spawn")
+multiprocessing.set_executable("/snap/frigate/current/frigate/bin/python.sh")
 
 faulthandler.enable()
 
