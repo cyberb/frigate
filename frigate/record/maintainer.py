@@ -191,16 +191,18 @@ class RecordingMaintainer(threading.Thread):
     async def validate_and_move_segment(
         self, camera: str, events: Event, recording: dict[str, any]
     ) -> None:
-        logger.error(f"validate_and_move_segment")
 
         cache_path = recording["cache_path"]
         start_time = recording["start_time"]
 
+        logger.error(f"validate_and_move_segment {cache_path}")
         # Just delete files if recordings are turned off
+        record_enabled = self.process_info[camera]["record_enabled"].value
         if (
             camera not in self.config.cameras
-            or not self.process_info[camera]["record_enabled"].value
+            or not record_enabled
         ):
+            logger.error(f"validate_and_move_segment {camera}, {record_enabled} delete {cache_path}")
             Path(cache_path).unlink(missing_ok=True)
             self.end_time_cache.pop(cache_path, None)
             return
@@ -232,12 +234,12 @@ class RecordingMaintainer(threading.Thread):
             datetime.datetime.now().astimezone(datetime.timezone.utc)
             - datetime.timedelta(days=self.config.cameras[camera].record.retain.days)
         ):
-            # if the cached segment overlaps with the events:
             overlaps = False
             for event in events:
                 # if the event starts in the future, stop checking events
                 # and remove this segment
                 if event.start_time > end_time.timestamp():
+                    logger.error(f"validate_and_move_segment ({event.start_time} > {end_time.timestamp()}) delete {cache_path}")
                     overlaps = False
                     Path(cache_path).unlink(missing_ok=True)
                     self.end_time_cache.pop(cache_path, None)

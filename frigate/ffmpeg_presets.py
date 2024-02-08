@@ -51,7 +51,7 @@ TIMEOUT_PARAM = (
 _gpu_selector = LibvaGpuSelector()
 _user_agent_args = [
     "-user_agent",
-    f"FFmpeg Frigate/{VERSION}",
+    f"FFmpeg-Frigate/{VERSION}",
 ]
 
 PRESETS_HW_ACCEL_DECODE = {
@@ -298,7 +298,7 @@ PRESETS_INPUT = {
     "preset-rtsp-blue-iris": _user_agent_args
     + [
         "-user_agent",
-        f"FFmpeg Frigate/{VERSION}",
+        f"FFmpeg-Frigate/{VERSION}",
         "-avoid_negative_ts",
         "make_zero",
         "-flags",
