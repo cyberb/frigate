@@ -191,6 +191,8 @@ class RecordingMaintainer(threading.Thread):
     async def validate_and_move_segment(
         self, camera: str, events: Event, recording: dict[str, any]
     ) -> None:
+        logger.error(f"validate_and_move_segment")
+
         cache_path = recording["cache_path"]
         start_time = recording["start_time"]
 
@@ -344,6 +346,8 @@ class RecordingMaintainer(threading.Thread):
         cache_path: str,
         store_mode: RetainModeEnum,
     ) -> Optional[Recordings]:
+        logger.error(f"move_segment {cache_path}")
+
         segment_info = self.segment_stats(camera, start_time, end_time)
 
         # check if the segment shouldn't be stored
