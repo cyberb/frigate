@@ -605,8 +605,10 @@ class CameraState:
         self.callbacks[event_type].append(callback)
 
     def update(self, frame_time, current_detections, motion_boxes, regions):
+
         # get the new frame
         frame_id = f"{self.name}{frame_time}"
+        logger.debug(f"camera state update {frame_id}")
         current_frame = self.frame_manager.get(
             frame_id, self.camera_config.frame_shape_yuv
         )
@@ -675,6 +677,7 @@ class CameraState:
         # maintain best objects
         for obj in tracked_objects.values():
             object_type = obj.obj_data["label"]
+            logger.debug(f"camera state update {object_type}")
             # if the object's thumbnail is not from the current frame
             if obj.false_positive or obj.thumbnail_data["frame_time"] != frame_time:
                 continue
@@ -761,6 +764,7 @@ class CameraState:
             del self.frame_cache[t]
 
         with self.current_frame_lock:
+            logger.debug(f"camera state setting current frame")
             self.tracked_objects = tracked_objects
             self.current_frame_time = frame_time
             self.motion_boxes = motion_boxes
