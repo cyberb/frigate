@@ -229,6 +229,7 @@ class RecordingMaintainer(threading.Thread):
                 Path(cache_path).unlink(missing_ok=True)
                 return
 
+        logger.error(f"validate_and_move_segment check start time")
         # if cached file's start_time is earlier than the retain days for the camera
         if start_time <= (
             datetime.datetime.now().astimezone(datetime.timezone.utc)
@@ -245,12 +246,14 @@ class RecordingMaintainer(threading.Thread):
                     self.end_time_cache.pop(cache_path, None)
                     break
 
+                logger.error(f"validate_and_move_segment check progress")
                 # if the event is in progress or ends after the recording starts, keep it
                 # and stop looking at events
                 if event.end_time is None or event.end_time >= start_time.timestamp():
                     overlaps = True
                     break
 
+            logger.error(f"validate_and_move_segment check overlays")
             if overlaps:
                 record_mode = self.config.cameras[camera].record.events.retain.mode
                 # move from cache to recordings immediately
@@ -274,8 +277,11 @@ class RecordingMaintainer(threading.Thread):
                     most_recently_processed_frame_time - pre_capture
                 ).astimezone(datetime.timezone.utc)
                 if end_time < retain_cutoff:
+                    logger.error(f"validate_and_move_segment ({end_time} < {retain_cutoff}) delete {cache_path}")
                     Path(cache_path).unlink(missing_ok=True)
                     self.end_time_cache.pop(cache_path, None)
+                logger.error(f"validate_and_move_segment no overlays")
+
         # else retain days includes this segment
         else:
             # assume that empty means the relevant recording info has not been received yet
@@ -295,6 +301,7 @@ class RecordingMaintainer(threading.Thread):
                 return await self.move_segment(
                     camera, start_time, end_time, duration, cache_path, record_mode
                 )
+            logger.error(f"validate_and_move_segment delayed")
 
     def segment_stats(
         self, camera: str, start_time: datetime.datetime, end_time: datetime.datetime
