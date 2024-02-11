@@ -35,19 +35,19 @@ export default function Storage() {
   let storage_usage;
   if (
     service &&
-    service['storage']['recordings']['total'] != service['storage']['clips']['total']
+    service['storage']['/media/frigate/recordings']['total'] != service['storage']['/media/frigate/clips']['total']
   ) {
     storage_usage = (
       <Fragment>
         <Tr>
           <Td>Recordings</Td>
-          <Td>{getUnitSize(service['storage']['recordings']['used'])}</Td>
-          <Td>{getUnitSize(service['storage']['recordings']['total'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/recordings']['used'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/recordings']['total'])}</Td>
         </Tr>
         <Tr>
           <Td>Snapshots</Td>
-          <Td>{getUnitSize(service['storage']['clips']['used'])}</Td>
-          <Td>{getUnitSize(service['storage']['clips']['total'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/clips']['used'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/clips']['total'])}</Td>
         </Tr>
       </Fragment>
     );
@@ -56,8 +56,8 @@ export default function Storage() {
       <Fragment>
         <Tr>
           <Td>Recordings & Snapshots</Td>
-          <Td>{getUnitSize(service['storage']['recordings']['used'])}</Td>
-          <Td>{getUnitSize(service['storage']['recordings']['total'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/recordings']['used'])}</Td>
+          <Td>{getUnitSize(service['storage']['/media/frigate/recordings']['total'])}</Td>
         </Tr>
       </Fragment>
     );
@@ -119,13 +119,13 @@ export default function Storage() {
                 <Tbody>
                   <Tr>
                     <Td>/dev/shm</Td>
-                    <Td>{getUnitSize(service['storage']['shm']['used'])}</Td>
-                    <Td>{getUnitSize(service['storage']['shm']['total'])}</Td>
+                    <Td>{getUnitSize(service['storage']['/dev/shm']['used'])}</Td>
+                    <Td>{getUnitSize(service['storage']['/dev/shm']['total'])}</Td>
                   </Tr>
                   <Tr>
                     <Td>/tmp/cache</Td>
-                    <Td>{getUnitSize(service['storage']['cache']['used'])}</Td>
-                    <Td>{getUnitSize(service['storage']['cache']['total'])}</Td>
+                    <Td>{getUnitSize(service['storage']['/tmp/cache']['used'])}</Td>
+                    <Td>{getUnitSize(service['storage']['/tmp/cache']['total'])}</Td>
                   </Tr>
                 </Tbody>
               </Table>

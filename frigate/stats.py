@@ -299,10 +299,10 @@ def stats_snapshot(
     }
 
     paths = [
-        {'path': RECORD_DIR, 'name': 'recordings'},
-        {'path': CLIPS_DIR, 'name': 'clips'},
-        {'path': CACHE_DIR, 'name': 'cache'},
-        {'path': "/dev/shm", 'name': 'shm'},
+        {'path': RECORD_DIR, 'name': '/media/frigate/recordings'},
+        {'path': CLIPS_DIR, 'name': '/media/frigate/clips'},
+        {'path': CACHE_DIR, 'name': '/tmp/cache'},
+        {'path': "/dev/shm", 'name': '/dev/shm'},
     ]
     for path in paths:
         try:
