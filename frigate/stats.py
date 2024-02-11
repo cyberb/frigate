@@ -298,18 +298,24 @@ def stats_snapshot(
         "last_updated": int(time.time()),
     }
 
-    for path in [RECORD_DIR, CLIPS_DIR, CACHE_DIR, "/dev/shm"]:
+    paths = [
+        {'path': RECORD_DIR, 'name': 'recordings'},
+        {'path': CLIPS_DIR, 'name': 'clips'},
+        {'path': CACHE_DIR, 'name': 'cache'},
+        {'path': "/dev/shm", 'name': 'shm'},
+    ]
+    for path in paths:
         try:
-            storage_stats = shutil.disk_usage(path)
+            storage_stats = shutil.disk_usage(path['path'])
         except FileNotFoundError:
-            stats["service"]["storage"][path] = {}
+            stats["service"]["storage"][path['name']] = {}
             continue
 
-        stats["service"]["storage"][path] = {
+        stats["service"]["storage"][path['name']] = {
             "total": round(storage_stats.total / pow(2, 20), 1),
             "used": round(storage_stats.used / pow(2, 20), 1),
             "free": round(storage_stats.free / pow(2, 20), 1),
-            "mount_type": get_fs_type(path),
+            "mount_type": get_fs_type(path['path']),
         }
 
     stats["processes"] = {}

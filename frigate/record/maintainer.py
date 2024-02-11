@@ -195,14 +195,11 @@ class RecordingMaintainer(threading.Thread):
         cache_path = recording["cache_path"]
         start_time = recording["start_time"]
 
-        logger.error(f"validate_and_move_segment {cache_path}")
         # Just delete files if recordings are turned off
-        record_enabled = self.process_info[camera]["record_enabled"].value
         if (
-            camera not in self.config.cameras
-            or not record_enabled
+                camera not in self.config.cameras
+                or not self.process_info[camera]["record_enabled"].value
         ):
-            logger.error(f"validate_and_move_segment {camera}, {record_enabled} delete {cache_path}")
             Path(cache_path).unlink(missing_ok=True)
             self.end_time_cache.pop(cache_path, None)
             return
@@ -229,7 +226,6 @@ class RecordingMaintainer(threading.Thread):
                 Path(cache_path).unlink(missing_ok=True)
                 return
 
-        logger.error(f"validate_and_move_segment check start time")
         # if cached file's start_time is earlier than the retain days for the camera
         if start_time <= (
             datetime.datetime.now().astimezone(datetime.timezone.utc)
@@ -240,20 +236,17 @@ class RecordingMaintainer(threading.Thread):
                 # if the event starts in the future, stop checking events
                 # and remove this segment
                 if event.start_time > end_time.timestamp():
-                    logger.error(f"validate_and_move_segment ({event.start_time} > {end_time.timestamp()}) delete {cache_path}")
                     overlaps = False
                     Path(cache_path).unlink(missing_ok=True)
                     self.end_time_cache.pop(cache_path, None)
                     break
 
-                logger.error(f"validate_and_move_segment check progress")
                 # if the event is in progress or ends after the recording starts, keep it
                 # and stop looking at events
                 if event.end_time is None or event.end_time >= start_time.timestamp():
                     overlaps = True
                     break
 
-            logger.error(f"validate_and_move_segment check overlays")
             if overlaps:
                 record_mode = self.config.cameras[camera].record.events.retain.mode
                 # move from cache to recordings immediately
@@ -277,10 +270,8 @@ class RecordingMaintainer(threading.Thread):
                     most_recently_processed_frame_time - pre_capture
                 ).astimezone(datetime.timezone.utc)
                 if end_time < retain_cutoff:
-                    logger.error(f"validate_and_move_segment ({end_time} < {retain_cutoff}) delete {cache_path}")
                     Path(cache_path).unlink(missing_ok=True)
                     self.end_time_cache.pop(cache_path, None)
-                logger.error(f"validate_and_move_segment no overlays")
 
         # else retain days includes this segment
         else:
@@ -301,7 +292,6 @@ class RecordingMaintainer(threading.Thread):
                 return await self.move_segment(
                     camera, start_time, end_time, duration, cache_path, record_mode
                 )
-            logger.error(f"validate_and_move_segment delayed")
 
     def segment_stats(
         self, camera: str, start_time: datetime.datetime, end_time: datetime.datetime
@@ -355,7 +345,6 @@ class RecordingMaintainer(threading.Thread):
         cache_path: str,
         store_mode: RetainModeEnum,
     ) -> Optional[Recordings]:
-        logger.error(f"move_segment {cache_path}")
 
         segment_info = self.segment_stats(camera, start_time, end_time)
 
