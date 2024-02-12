@@ -1575,7 +1575,7 @@ def get_recordings_storage_usage():
         current_app.frigate_config,
         current_app.stats_tracking,
         current_app.hwaccel_errors,
-    )["service"]["storage"][RECORD_DIR]
+    )["service"]["storage"]["/media/frigate/recordings"]
 
     if not recording_stats:
         return jsonify({})
